@@ -3,16 +3,49 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-var str: number = 123
+var initialState = {value: null}
 
-function HelloWorld(str) {
-  return (
-      React.createElement('p' , {className: 'body-para'}, stringMaker('str'))
-    )
+
+const App = React.createClass ({
+  getInitialState: function() {
+    return this.props
+  },
+
+  update: function({eventName, value}) {
+    console.log(eventName, value.target.value);
+    switch(eventName) {
+      case 'stringFieldChange':
+        this.setState({state: {value: value.target.value}});
+        break;
+    }
+  },
+
+  receiveUpdateWithClosure: function(eventName) {
+    const update = this.update
+    return function(event) {
+      update({eventName: eventName, value: event});
+    }
+  },
+
+  render: function() {
+    return <HelloWorld str='string' state={this.state.state} handleChange={this.receiveUpdateWithClosure}/>
   }
+});
 
-function stringMaker(string: string) {
-  return "hello " + string
-}
+const HelloWorld = ({str, state, handleChange}) => (
+  <div>
+    <div>
+      <p>{state.value}</p>
+    </div>
+    <div>
+    <p>{handleChange}</p>
+      <StringField state={state} handleChange={handleChange} />
+    </div>
+  </div>
+);
 
-ReactDOM.render(React.createElement(HelloWorld), document.getElementById('app'));
+const StringField = ({state, handleChange}) => (
+  <input type='text' value={state.value} onChange={handleChange('stringFieldChange')}/>
+);
+
+ReactDOM.render(<App state={initialState}/>, document.getElementById('app'));
