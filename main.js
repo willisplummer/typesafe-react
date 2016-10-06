@@ -3,36 +3,47 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-var initialState = {value: null}
+type UpdateMessage = 'stringFieldChange'
+type State = {value: string}
+type Props = {state: State}
+type StringFieldEvent = {target: {value: string}}
 
+class App extends React.Component {
+  state: State;
 
-const App = React.createClass ({
-  getInitialState: function() {
-    return this.props
-  },
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+    (this:any).update = this.update.bind(this);
+    (this:any).receiveUpdateWithClosure = this.receiveUpdateWithClosure.bind(this);
+    (this:any).handleStringFieldChange = this.handleStringFieldChange.bind(this);
+  }
 
-  update: function({eventName, value}) {
-    console.log(eventName, value.target.value);
+  update({eventName, value}: {eventName: UpdateMessage, value: any}) {
     switch(eventName) {
       case 'stringFieldChange':
-        this.setState({state: {value: value.target.value}});
+        this.handleStringFieldChange(value);
         break;
     }
-  },
+  }
 
-  receiveUpdateWithClosure: function(eventName) {
+  handleStringFieldChange(value: StringFieldEvent) {
+    this.setState({value: value.target.value});
+  }
+
+  receiveUpdateWithClosure(eventName: UpdateMessage) {
     const update = this.update
-    return function(event) {
+    return function(event: any) {
       update({eventName: eventName, value: event});
     }
-  },
-
-  render: function() {
-    return <HelloWorld str='string' state={this.state.state} handleChange={this.receiveUpdateWithClosure}/>
   }
-});
 
-const HelloWorld = ({str, state, handleChange}) => (
+  render() {
+    return <HelloWorld str='string' state={this.state} handleChange={this.receiveUpdateWithClosure}/>
+  }
+};
+
+const HelloWorld = ({state, handleChange}: { state: Object, handleChange: Function }) => (
   <div>
     <div>
       <p>{state.value}</p>
@@ -44,8 +55,8 @@ const HelloWorld = ({str, state, handleChange}) => (
   </div>
 );
 
-const StringField = ({state, handleChange}) => (
+const StringField = ({state, handleChange}: { state: Object, handleChange: Function }) => (
   <input type='text' value={state.value} onChange={handleChange('stringFieldChange')}/>
 );
 
-ReactDOM.render(<App state={initialState}/>, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
