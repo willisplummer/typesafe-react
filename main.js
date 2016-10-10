@@ -75,15 +75,9 @@ class App extends React.Component {
   }
 
   render() {
-    return <HelloWorld str='string' state={this.state} handleChange={this.receiveUpdateWithClosure}/>
+    return <ContactFlow str='string' state={this.state} handleChange={this.receiveUpdateWithClosure}/>
   }
 };
-
-const HelloWorld = ({state, handleChange}: { state: State, handleChange: Function }) => (
-  <div>
-    <ContactFlow state={state} handleChange={handleChange} />
-  </div>
-);
 
 const ContactFlow = ({state, handleChange}: { state: State, handleChange: Function}) => (
   <div>
@@ -91,68 +85,68 @@ const ContactFlow = ({state, handleChange}: { state: State, handleChange: Functi
       <Buttons state={state} handleChange={handleChange}/>
     </div>
     <div>
-      { state.requestType=='' ? null : <Questions state={state} handleChange={handleChange}/> }
+      { state.requestType=='' ? null : <Questions requestType={state.requestType} handleChange={handleChange}/> }
     </div>
     <div>
-      { state.requestQuestion=='' ? null : <Answer state={state} handleChange={handleChange}/> }
+      { state.requestQuestion=='' ? null : <Answer requestQuestion={state.requestQuestion} handleChange={handleChange}/> }
     </div>
     <div>
-      { state.openTicketField==false ? null : <TicketField state={state} handleChange={handleChange}/> }
+      { state.openTicketField==false ? null : <TicketField ticketQuestion={state.ticketQuestion} handleChange={handleChange}/> }
     </div>
   </div>
 );
 
-const Buttons = ({state, handleChange}: { state: State, handleChange: Function}) => (
+const Buttons = ({handleChange}: { handleChange: Function}) => (
   <div>
     <h2>My Request Is About:</h2>
-    <Button state={state} handleChange={handleChange} eventName='requestTypeButtonClick' eventMessage='pledge' displayCopy='A Pledge'/>
+    <Button handleChange={handleChange} eventName='requestTypeButtonClick' eventMessage='pledge' displayCopy='A Pledge'/>
     <span>|</span>
-    <Button state={state} handleChange={handleChange} eventName='requestTypeButtonClick' eventMessage='project' displayCopy='A Project'/>
+    <Button handleChange={handleChange} eventName='requestTypeButtonClick' eventMessage='project' displayCopy='A Project'/>
   </div>
 );
 
-const Button = ({state, handleChange, eventName, eventMessage, displayCopy}: { state: State, handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}) => (
+const Button = ({handleChange, eventName, eventMessage, displayCopy}: { handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}) => (
   <input type="button" value={displayCopy} onClick={handleChange(eventName, eventMessage)}/>
 );
 
-const Question = ({state, handleChange, eventName, eventMessage, displayCopy}: { state: State, handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}) => (
+const Question = ({handleChange, eventName, eventMessage, displayCopy}: { handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}) => (
   <input type="button" value={displayCopy} onClick={handleChange(eventName, eventMessage)}/>
 );
 
-const Questions = ({state, handleChange}: { state: State, handleChange: Function}) => {
-  if (state.requestType=='project') {
+const Questions = ({requestType, handleChange}: { requestType: RequestType, handleChange: Function}) => {
+  if (requestType=='project') {
     return (
       <div>
-        <Question state={state} handleChange={handleChange} eventName='questionClick' eventMessage='projectQuestion1' displayCopy='What is my project?'/>
+        <Question handleChange={handleChange} eventName='questionClick' eventMessage='projectQuestion1' displayCopy='What is my project?'/>
         <span>|</span>
-        <Question state={state} handleChange={handleChange} eventName='questionClick' eventMessage='projectQuestion2' displayCopy='When will it end?'/>
+        <Question handleChange={handleChange} eventName='questionClick' eventMessage='projectQuestion2' displayCopy='When will it end?'/>
       </div>
     );
   } else {
     return (
       <div>
-        <Question state={state} handleChange={handleChange} eventName='questionClick' eventMessage='pledgeQuestion1' displayCopy='What is my pledge?'/>
+        <Question handleChange={handleChange} eventName='questionClick' eventMessage='pledgeQuestion1' displayCopy='What is my pledge?'/>
         <span>|</span>
-        <Question state={state} handleChange={handleChange} eventName='questionClick' eventMessage='pledgeQuestion2' displayCopy='When will it arrive?'/>
+        <Question handleChange={handleChange} eventName='questionClick' eventMessage='pledgeQuestion2' displayCopy='When will it arrive?'/>
       </div>
     );
   };
 };
 
-const Answer = ({state, handleChange}: { state: State, handleChange: Function}) => (
+const Answer = ({requestQuestion, handleChange}: { requestQuestion: RequestType, handleChange: Function}) => (
   <div>
-    <p>This is the answer to your question, {state.requestQuestion}</p>
-    <NeedHelp state={state} handleChange={handleChange} />
+    <p>This is the answer to your question, {requestQuestion}</p>
+    <NeedHelp handleChange={handleChange} />
   </div>
 )
 
-const NeedHelp = ({state, handleChange}: { state: State, handleChange: Function}) => (
+const NeedHelp = ({handleChange}: { handleChange: Function}) => (
   <input type="button" value='still need help?' onClick={handleChange('openTicketField')}/>
 );
 
-const TicketField = ({state, handleChange}: { state: Object, handleChange: Function }) => (
+const TicketField = ({ticketQuestion, handleChange}: { ticketQuestion: string, handleChange: Function }) => (
   <div>
-    <textarea value={state.ticketQuestion} onChange={handleChange('ticketFieldChange')}/>
+    <textarea value={ticketQuestion} onChange={handleChange('ticketFieldChange')}/>
     <input type="button" value='submit it!' onClick={handleChange('submitRequest')}/>
   </div>
 );
