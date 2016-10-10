@@ -4,7 +4,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 // MODEL
-type State = {requestType: RequestType, requestQuestion: RequestType, openTicketField: bool, ticketQuestion: string, error: string}
+type State =  { requestType: RequestType
+              , requestQuestion: RequestType
+              , openTicketField: bool
+              , ticketQuestion: string
+              , error: string
+              }
 type Props = {state: State}
 
 // UPDATE
@@ -140,7 +145,7 @@ class App extends React.Component {
     }
   }
 
-  render() {
+  render(): React$Element<any> {
     return <ContactFlow
               str='string'
               state={this.state}
@@ -149,7 +154,7 @@ class App extends React.Component {
   };
 };
 
-const ContactFlow = ({state, handleChange}: { state: State, handleChange: Function}) => (
+const ContactFlow = ({state, handleChange}: { state: State, handleChange: Function}): React$Element<any> => (
   <div>
     <div>
       <Buttons
@@ -169,7 +174,7 @@ const ContactFlow = ({state, handleChange}: { state: State, handleChange: Functi
   </div>
 );
 
-const Buttons = ({handleChange}: { handleChange: Function}) => (
+const Buttons = ({handleChange}: { handleChange: Function}): React$Element<any> => (
   <div>
     <h2>My Request Is About:</h2>
     <Button
@@ -187,7 +192,7 @@ const Buttons = ({handleChange}: { handleChange: Function}) => (
   </div>
 );
 
-const Button = ({handleChange, eventName, eventMessage, displayCopy}: { handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}) => (
+const Button = ({handleChange, eventName, eventMessage, displayCopy}: { handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}): React$Element<any> => (
   <input
     type="button"
     value={displayCopy}
@@ -195,7 +200,7 @@ const Button = ({handleChange, eventName, eventMessage, displayCopy}: { handleCh
   />
 );
 
-const Question = ({handleChange, eventName, eventMessage, displayCopy}: { handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}) => (
+const Question = ({handleChange, eventName, eventMessage, displayCopy}: { handleChange: Function, eventName: UpdateMessage, eventMessage: RequestType, displayCopy: string}): React$Element<any> => (
   <input
     type="button"
     value={displayCopy}
@@ -203,7 +208,7 @@ const Question = ({handleChange, eventName, eventMessage, displayCopy}: { handle
   />
 );
 
-const Questions = ({requestType, handleChange}: { requestType: RequestType, handleChange: Function}) => {
+const Questions = ({requestType, handleChange}: { requestType: RequestType, handleChange: Function}): React$Element<any> => {
   if (requestType=='project') {
     return (
       <div>
@@ -241,14 +246,14 @@ const Questions = ({requestType, handleChange}: { requestType: RequestType, hand
   };
 };
 
-const Answer = ({requestQuestion, handleChange}: { requestQuestion: RequestType, handleChange: Function}) => (
+const Answer = ({requestQuestion, handleChange}: { requestQuestion: RequestType, handleChange: Function}): React$Element<any> => (
   <div>
     <p>This is the answer to your question, {requestQuestion}</p>
     <NeedHelp handleChange={handleChange} />
   </div>
 )
 
-const NeedHelp = ({handleChange}: { handleChange: Function}) => (
+const NeedHelp = ({handleChange}: { handleChange: Function}): React$Element<any> => (
   <input
     type="button"
     value='still need help?'
@@ -256,7 +261,7 @@ const NeedHelp = ({handleChange}: { handleChange: Function}) => (
   />
 );
 
-const TicketField = ({ticketQuestion, handleChange, error}: { ticketQuestion: string, handleChange: Function, error: string }) => {
+const TicketField = ({ticketQuestion, handleChange, error}: { ticketQuestion: string, handleChange: Function, error: string }): React$Element<any> => {
   const textFieldStyle = error ==='' ? {} : {border: '3px red solid'}
   const errorStyle = {color: 'red'}
 
