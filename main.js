@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 // MODEL
-type State = {requestType: RequestType, requestQuestion: RequestType, openTicketField: bool, ticketQuestion: string}
+type State = {requestType: RequestType, requestQuestion: RequestType, openTicketField: bool, ticketQuestion: string, error: string}
 type Props = {state: State}
 
 // UPDATE
@@ -17,7 +17,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {requestType: '', requestQuestion: '', openTicketField: false, ticketQuestion: ''};
+    this.state = {requestType: '', requestQuestion: '', openTicketField: false, ticketQuestion: '', error: ''};
     (this:any).update = this.update.bind(this);
     (this:any).receiveUpdateWithClosure = this.receiveUpdateWithClosure.bind(this);
     (this:any).handlerequestTypeButtonClick = this.handlerequestTypeButtonClick.bind(this);
@@ -25,6 +25,7 @@ class App extends React.Component {
     (this:any).openTicketField = this.openTicketField.bind(this);
     (this:any).handleTicketFieldChange = this.handleTicketFieldChange.bind(this);
     (this:any).submitRequest = this.submitRequest.bind(this);
+    (this:any).validateTicketField = this.validateTicketField.bind(this);
   }
 
   update({eventName, eventMessage, value}: {eventName: UpdateMessage, eventMessage: any, value: any}) {
@@ -48,23 +49,31 @@ class App extends React.Component {
   }
 
   submitRequest() {
+    this.validateTicketField(this.state.ticketQuestion);
     console.log('submitting!');
   }
 
   handleTicketFieldChange(value: StringFieldEvent) {
-    this.setState({requestType: this.state.requestType, requestQuestion: this.state.requestQuestion, openTicketField: this.state.openTicketField, ticketQuestion: value.target.value});
+    this.setState({requestType: this.state.requestType, requestQuestion: this.state.requestQuestion, openTicketField: this.state.openTicketField, ticketQuestion: value.target.value, error: ''});
+  }
+
+  validateTicketField(ticketQuestion: string) {
+    console.log(ticketQuestion);
+    if (ticketQuestion === '') {
+      this.setState({requestType: this.state.requestType, requestQuestion: this.state.requestQuestion, openTicketField: this.state.openTicketField, ticketQuestion: this.state.ticketQuestion, error: 'ask a question!'});
+    }
   }
 
   handlerequestTypeButtonClick(requestType: RequestType) {
-    this.setState({requestType: requestType, requestQuestion: '', openTicketField: false, ticketQuestion: ''})
+    this.setState({requestType: requestType, requestQuestion: '', openTicketField: false, ticketQuestion: '', error: ''})
   }
 
   handleQuestionClick(questionType: RequestType) {
-    this.setState({requestType: this.state.requestType, requestQuestion: questionType, openTicketField: false, ticketQuestion: ''})
+    this.setState({requestType: this.state.requestType, requestQuestion: questionType, openTicketField: false, ticketQuestion: '', error: ''})
   }
 
   openTicketField() {
-    this.setState({requestType: this.state.requestType, requestQuestion: this.state.requestQuestion, openTicketField: true, ticketQuestion: this.state.ticketQuestion})
+    this.setState({requestType: this.state.requestType, requestQuestion: this.state.requestQuestion, openTicketField: true, ticketQuestion: this.state.ticketQuestion, error: ''})
   }
 
   receiveUpdateWithClosure(eventName: UpdateMessage, eventMessage: any) {
@@ -91,7 +100,7 @@ const ContactFlow = ({state, handleChange}: { state: State, handleChange: Functi
       { state.requestQuestion=='' ? null : <Answer requestQuestion={state.requestQuestion} handleChange={handleChange}/> }
     </div>
     <div>
-      { state.openTicketField==false ? null : <TicketField ticketQuestion={state.ticketQuestion} handleChange={handleChange}/> }
+      { state.openTicketField==false ? null : <TicketField ticketQuestion={state.ticketQuestion} handleChange={handleChange} error={state.error}/> }
     </div>
   </div>
 );
@@ -126,7 +135,6 @@ const Questions = ({requestType, handleChange}: { requestType: RequestType, hand
     return (
       <div>
         <Question handleChange={handleChange} eventName='questionClick' eventMessage='pledgeQuestion1' displayCopy='What is my pledge?'/>
-        <span>|</span>
         <Question handleChange={handleChange} eventName='questionClick' eventMessage='pledgeQuestion2' displayCopy='When will it arrive?'/>
       </div>
     );
@@ -144,11 +152,18 @@ const NeedHelp = ({handleChange}: { handleChange: Function}) => (
   <input type="button" value='still need help?' onClick={handleChange('openTicketField')}/>
 );
 
-const TicketField = ({ticketQuestion, handleChange}: { ticketQuestion: string, handleChange: Function }) => (
-  <div>
-    <textarea value={ticketQuestion} onChange={handleChange('ticketFieldChange')}/>
-    <input type="button" value='submit it!' onClick={handleChange('submitRequest')}/>
-  </div>
-);
+const TicketField = ({ticketQuestion, handleChange, error}: { ticketQuestion: string, handleChange: Function, error: string }) => {
+  var textFieldStyle = {}
+  var errorStyle = {color: 'red'}
+  error ==='' ? null : textFieldStyle = {border: '3px red solid'}
+
+  return (
+    <div>
+      <textarea value={ticketQuestion} style={textFieldStyle} onChange={handleChange('ticketFieldChange')}/>
+      <input type="button" value='submit it!' onClick={handleChange('submitRequest')}/>
+      { error=='' ? null : <p style={errorStyle}>{error}</p> }
+    </div>
+  );
+};
 
 ReactDOM.render(<App />, document.getElementById('app'));
